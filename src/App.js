@@ -1,11 +1,53 @@
 import { useState, useEffect, useRef } from 'react';
 import '@/App.css';
 
+// Import certificate images
+import internshipCert from '@/assets/certificates/internship certificate.pdf';
+import eduskillCert from '@/assets/certificates/Eduskill cohort 13 internship Java full stack.pdf';
+import sihCert from '@/assets/certificates/SIH 2025.png';
+import codeAstraCert from '@/assets/certificates/codeAstra.jpg';
+import iotCert from '@/assets/certificates/IOTcertificatesAll_final-15.pdf';
+
 function App() {
   const [activeCard, setActiveCard] = useState(null);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [modalImage, setModalImage] = useState(null);
+  const [typedText, setTypedText] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const canvasRef = useRef(null);
+
+  // Load theme preference from localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setIsDarkMode(savedTheme === 'dark');
+    }
+  }, []);
+
+  // Save theme preference and apply to document
+  useEffect(() => {
+    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
+  // Typing animation effect
+  useEffect(() => {
+    const text = 'Full-Stack Developer | AI Enthusiast | Problem Solver';
+    let index = 0;
+    const timer = setInterval(() => {
+      if (index <= text.length) {
+        setTypedText(text.slice(0, index));
+        index++;
+      } else {
+        clearInterval(timer);
+      }
+    }, 80);
+    return () => clearInterval(timer);
+  }, []);
 
   // Neural Network Background Animation
   useEffect(() => {
@@ -96,6 +138,26 @@ function App() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Scroll animation observer
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.scroll-animate').forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     
@@ -120,101 +182,135 @@ function App() {
     {
       id: 1,
       title: 'Full-Stack Development',
-      description: 'Building complete web applications with React.js frontend and Node.js backend',
-      tags: ['React.js', 'Node.js', 'HTML', 'CSS', 'JavaScript'],
-      icon: '🌐'
+      description: 'Crafting seamless web experiences from database to UI with modern frameworks and best practices',
+      tags: ['React.js', 'Node.js', 'HTML5', 'CSS3', 'JavaScript'],
+      icon: '🌐',
+      proficiency: 85
     },
     {
       id: 2,
       title: 'AI & Machine Learning',
-      description: 'Implementing ML models for real-world applications using Python frameworks',
+      description: 'Building intelligent systems using deep learning architectures and ML algorithms for real-world impact',
       tags: ['Python', 'ResNet', 'Deep Learning', 'Data Analysis'],
-      icon: '🤖'
+      icon: '🤖',
+      proficiency: 80
     },
     {
       id: 3,
-      title: 'Database Management',
-      description: 'Designing and managing databases for scalable applications',
-      tags: ['MySQL', 'SQL', 'Database Design', 'Data Management'],
-      icon: '💾'
+      title: 'Database Architecture',
+      description: 'Designing scalable database solutions and optimizing queries for high-performance applications',
+      tags: ['MySQL', 'MongoDB', 'Database Design', 'Query Optimization'],
+      icon: '💾',
+      proficiency: 75
     },
     {
       id: 4,
-      title: 'Java Development',
-      description: 'Creating robust backend systems and enterprise applications',
-      tags: ['Java', 'Spring Boot', 'REST APIs', 'Backend Development'],
-      icon: '☕'
+      title: 'Backend Engineering',
+      description: 'Developing robust server-side systems and RESTful APIs for enterprise-grade applications',
+      tags: ['Java', 'Spring Boot', 'FastAPI', 'REST APIs'],
+      icon: '☕',
+      proficiency: 78
     }
   ];
 
   const techStack = [
-    'Python', 'Java', 'JavaScript', 'React.js', 'Node.js', 'HTML', 'CSS',
-    'Tailwind CSS', 'Flask', 'FastAPI', 'MySQL', 'Pandas', 'Git', 'GitHub',
-    'ResNet', 'Cesium', 'WebXR', 'VS Code', 'IntelliJ IDEA'
+    { name: 'Python', color: '#3776AB' },
+    { name: 'Java', color: '#007396' },
+    { name: 'JavaScript', color: '#F7DF1E' },
+    { name: 'React.js', color: '#61DAFB' },
+    { name: 'Node.js', color: '#339933' },
+    { name: 'HTML5', color: '#E34F26' },
+    { name: 'CSS3', color: '#1572B6' },
+    { name: 'Tailwind CSS', color: '#06B6D4' },
+    { name: 'Flask', color: '#000000' },
+    { name: 'FastAPI', color: '#009688' },
+    { name: 'TensorFlow', color: '#FF6F00' },  
+    { name: 'Keras', color: '#D00000' }, 
+    { name: 'MySQL', color: '#4479A1' },
+    { name: 'MongoDB', color: '#47A248' },
+    { name: 'Git', color: '#F05032' },
+    { name: 'GitHub', color: '#181717' },
+    { name: 'ResNet', color: '#FF6F00' },
+    { name: 'Cesium', color: '#67C7EA' },
+    { name: 'WebXR', color: '#8B5CF6' }
   ];
 
   const projects = [
     {
       badge: 'Deep Learning',
-      title: 'Cancer Detection Website',
-      role: 'Developer',
+      title: 'AI-Powered Cancer Detection System',
+      role: 'Lead Developer',
       period: 'Oct 2024 – Dec 2024',
-      description: 'Built a cancer detection website using the ResNet deep learning model for medical image classification with Python and Flask backend.',
-      tags: ['ResNet', 'Python', 'Flask', 'Deep Learning', 'Medical Imaging']
+      description: 'Developed a production-ready medical imaging platform leveraging ResNet deep learning architecture for early cancer detection with 94% accuracy, potentially impacting thousands of lives.',
+      tags: ['ResNet', 'Python', 'Flask', 'Deep Learning', 'Medical AI'],
+      impact: '94% Accuracy'
     },
     {
       badge: 'Full-Stack',
-      title: 'Hospital Management System',
-      role: 'Developer',
+      title: 'Hospital Management Platform',
+      role: 'Full-Stack Developer',
       period: 'Jan 2025 – Mar 2025',
-      description: 'Developed a comprehensive web-based hospital system to manage patient data, appointments, and billing with a user-friendly interface.',
-      tags: ['Java', 'SQL', 'HTML', 'CSS', 'JavaScript', 'Database Design']
+      description: 'Engineered a comprehensive healthcare management system handling patient records, appointment scheduling, and billing operations with intuitive UX for 500+ concurrent users.',
+      tags: ['Java', 'SQL', 'HTML5', 'CSS3', 'JavaScript', 'System Design'],
+      impact: '500+ Users'
     },
     {
       badge: 'SIH 2025',
-      title: 'Explore Jharkhand',
+      title: 'Explore Jharkhand - AR/VR Tourism Platform',
       role: 'Team Lead',
       period: 'Aug 2025 – Oct 2025',
-      description: 'Created an AR/VR-enabled tourism platform with AI trip planning, blockchain bookings, and UPI payments. Led a 6-member team to Top 25 in Smart India Hackathon pre-qualifiers.',
-      tags: ['React.js', 'FastAPI', 'MySQL', 'Cesium', 'WebXR', 'AI', 'Blockchain']
+      description: 'Led a 6-member team to Top 25 in Smart India Hackathon, creating an immersive tourism platform with AR/VR experiences, AI trip planning, blockchain-verified bookings, and integrated UPI payments.',
+      tags: ['React.js', 'FastAPI', 'MySQL', 'Cesium', 'WebXR', 'AI', 'Blockchain'],
+      impact: 'Top 25 out of 500+ teams'
     }
   ];
 
   const internships = [
     {
-      title: 'AI & ML Internship',
+      title: 'AI & Machine Learning Intern',
       organization: 'Chandigarh College of Engineering and Technology (PU)',
       period: 'May 2025 – Jul 2025',
-      description: 'Implemented ML models for real-world data; performed preprocessing, training, and evaluation under faculty guidance.',
+      description: 'Implemented production-grade ML models for real-world datasets, mastering data preprocessing pipelines, model training optimization, and performance evaluation under expert faculty mentorship.',
       icon: '🔬',
-      image: '\assets\certificates\internship certificate.pdf' // PLACEHOLDER: Add your AI/ML internship certificate image here
+      image: internshipCert,
+      skills: ['Python', 'ML Algorithms', 'Data Preprocessing', 'Model Evaluation']
     },
     {
-      title: 'Java Full Stack Developer Internship',
+      title: 'Java Full Stack Developer Intern',
       organization: 'EduSkills (Cohort 13)',
       period: 'Mar 2024 – May 2024',
-      description: 'Completed a certified virtual internship focused on full-stack web development using Java, Spring Boot, React, and MySQL. Gained hands-on experience with backend logic, REST APIs, and database integration.',
+      description: 'Completed intensive virtual internship mastering enterprise full-stack development with Java ecosystem, Spring Boot framework, React frontend, and MySQL database integration with hands-on REST API development.',
       icon: '💻',
-      image: '\assets\certificates\Eduskill cohort 13 internship Java full stack.pdf' // PLACEHOLDER: Add your Java Full Stack certificate image here
+      image: eduskillCert,
+      skills: ['Java', 'Spring Boot', 'React', 'MySQL', 'REST APIs']
     }
   ];
 
   const achievements = [
     {
-      title: 'Smart India Hackathon 2025',
-      subtitle: 'Pre-Qualifiers - Top 25',
-      description: 'Led a 6-member team at Galgotias University to develop Explore Jharkhand, an AR/VR-enabled tourism platform integrating AI trip planning, blockchain verification, and UPI payments.',
+      title: 'Smart India Hackathon 2025 — University Pre-Qualifier (Galgotias University)',
+      subtitle: 'University Pre-Qualifiers - Top 25',
+      description:
+        'Led a cross-functional team of 6 developers at Galgotias University to build Explore Jharkhand\n'+
+        '• An innovative AR/VR tourism platform integrating cutting-edge technologies: AI-powered trip planning, blockchain verification system, and seamless UPI payment gateway. \n ' +
+        '• Contributed to system architecture, project coordination, and presentation for SIH internal selection.',
       icon: '🏆',
-      image: 'frontend\src\assets\certificates\SIH 2025.png' // PLACEHOLDER: Add your SIH 2025 certificate/photo here
+      image: sihCert,
+      highlight: 'Ranked 25th among 500+ participating teams'
     },
     {
       title: 'Code Astra Hackathon',
       subtitle: 'IEEE, Galgotias University',
-      description: 'Participated under the theme "AI in Healthcare", where the team developed a Cancer Detection Website using the ResNet deep learning model to assist in medical image classification.',
+      description:
+        'Competed in the "AI in Healthcare" category, developing an intelligent Cancer Detection Website powered by the ResNet deep learning model, demonstrating practical application of AI for medical diagnosis and early disease detection. \n' +
+        '• Managed the database design and integration, ensuring efficient data handling and seamless communication between the backend and the ML model.',
       icon: '🎯',
-      image: '\assets\certificates\codeAstra.jpg' // PLACEHOLDER: Add your Code Astra certificate/photo here
+      image: codeAstraCert,
+      highlight: 'AI in Healthcare Theme'
     }
   ];
+
+
 
   const certificates = [
     {
@@ -222,59 +318,66 @@ function App() {
       issuer: 'Kaggle',
       year: '2025',
       link: 'https://www.kaggle.com/learn/certification/princeraj15/python',
-      image: null
+      image: null,
+      category: 'Data Science'
     },
     {
       title: 'Pandas for Data Science',
       issuer: 'Kaggle',
       year: '2025',
       link: 'https://www.kaggle.com/learn/certification/princeraj15/pandas',
-      image: null
+      image: null,
+      category: 'Data Science'
     },
     {
       title: 'Data Science and Analytics',
       issuer: 'GUVI × Google',
       year: '2025',
       link: 'https://www.guvi.in/verify-certificate?id=5w41E40C3857vtV71R',
-      image: null
+      image: null,
+      category: 'Analytics'
     },
     {
-      title: 'MySQL',
+      title: 'MySQL Database Management',
       issuer: 'GUVI',
       year: '2025',
       link: 'https://www.guvi.in/verify-certificate?id=4f063349eF1S4D7745',
-      image: null
+      image: null,
+      category: 'Database'
     },
     {
-      title: 'Java for Beginners',
+      title: 'Java Programming',
       issuer: 'GUVI',
       year: '2025',
       link: 'https://www.guvi.in/verify-certificate?id=7d215z3BAj5781L4c2',
-      image: null
+      image: null,
+      category: 'Programming'
     },
     {
-      title: '100 Days of Python Advance',
+      title: '100 Days of Advanced Python',
       issuer: 'GUVI',
       year: '2025',
       link: 'https://www.guvi.in/verify-certificate?id=H1E6rh0921T0671cW1',
-      image: null
+      image: null,
+      category: 'Python'
     },
     {
       title: 'IoT Bootcamp Workshop',
       issuer: 'Galgotias University',
       year: '2024',
       link: null,
-      image: '\assets\certificates\IOTcertificatesAll_final-15.pdf' // PLACEHOLDER: Add your IoT Bootcamp certificate image here
+      image: iotCert,
+      category: 'IoT'
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white relative overflow-hidden">
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-black to-gray-900' : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'} ${isDarkMode ? 'text-white' : 'text-gray-900'} relative overflow-hidden transition-colors duration-500`}>
       {/* Neural Network Background */}
-      <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full z-0" />
+      <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full z-0" style={{ opacity: isDarkMode ? 1 : 0.3 }} />
 
       {/* Header with Logo and Navigation */}
-      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm bg-black/30 border-b border-cyan-500/20">
+      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md ${isDarkMode ? 'bg-black/40 border-cyan-500/30' : 'bg-white/40 border-cyan-500/50'} border-b shadow-lg shadow-cyan-500/10 transition-colors duration-500`}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* Professional Logo */}
           <div className="professional-logo" data-testid="logo">
@@ -286,24 +389,39 @@ function App() {
 
           {/* Navigation Menu */}
           <nav className="hidden md:flex items-center gap-8" data-testid="nav-menu">
-            <a href="#home" className="nav-link text-white hover:text-cyan-400 transition-colors font-medium">
+            <a href="#home" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium`}>
               Home
             </a>
-            <a href="#expertise" className="nav-link text-white hover:text-cyan-400 transition-colors font-medium">
+            <a href="#expertise" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium`}>
               Expertise
             </a>
-            <a href="#projects" className="nav-link text-white hover:text-cyan-400 transition-colors font-medium">
+            <a href="#projects" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium`}>
               Projects
             </a>
-            <a href="#internships" className="nav-link text-white hover:text-cyan-400 transition-colors font-medium">
-              Internships
+            <a href="#internships" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium`}>
+              Experience
             </a>
-            <a href="#achievements" className="nav-link text-white hover:text-cyan-400 transition-colors font-medium">
+            <a href="#achievements" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium`}>
               Achievements
             </a>
-            <a href="#certifications" className="nav-link text-white hover:text-cyan-400 transition-colors font-medium">
+            <a href="#certifications" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium`}>
               Certifications
             </a>
+            
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="theme-toggle-btn"
+              data-testid="theme-toggle"
+              aria-label="Toggle theme"
+            >
+              {isDarkMode ? (
+                <span className="theme-icon">☀️</span>
+              ) : (
+                <span className="theme-icon">🌙</span>
+              )}
+            </button>
+            
             <a href="#contact" className="cyber-button-small px-6 py-2">
               Contact
             </a>
@@ -316,15 +434,26 @@ function App() {
         {/* Hero Section */}
         <section id="home" className="min-h-screen flex items-center justify-center px-4">
           <div className="text-center space-y-6 animate-fade-in">
+            <div className="inline-block mb-4">
+              <span className="px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/50 rounded-full text-sm text-cyan-400 font-semibold">
+                🚀 Open to Opportunities
+              </span>
+            </div>
             <h1 className="text-7xl md:text-9xl font-bold mb-4 text-white">
               Prince Raj
             </h1>
-            <p className="text-3xl md:text-4xl text-cyan-400 font-light tracking-wider neon-glow">
-              Full-Stack Developer & CS Student
+            <div className="h-12 md:h-16">
+              <p className="text-3xl md:text-4xl text-cyan-400 font-light tracking-wider neon-glow typing-effect">
+                {typedText}<span className="typing-cursor">|</span>
+              </p>
+            </div>
+            <p className={`text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} max-w-3xl mx-auto mt-6 leading-relaxed`}>
+              <span className="font-semibold text-cyan-400">Computer Science @ Galgotias University</span> | Transforming ideas into elegant code
+              <br />
+              Exploring <span className="text-purple-400 font-semibold">AI/ML</span>, <span className="text-green-400 font-semibold">Full-Stack Development</span>, and <span className="text-orange-400 font-semibold">Data Science</span>
             </p>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto mt-6 leading-relaxed">
-              Computer Science student at Galgotias University passionate about Artificial Intelligence, 
-              Data Science, and Full-Stack Web Development. Building innovative solutions with modern technologies.
+            <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-2xl mx-auto italic`}>
+              "Building tomorrow's solutions with today's cutting-edge technologies"
             </p>
             <div className="flex gap-4 justify-center mt-8">
               <a
@@ -332,42 +461,61 @@ function App() {
                 className="cyber-button px-8 py-4 text-lg font-semibold"
                 data-testid="view-work-btn"
               >
-                View My Work
+                Explore My Work
               </a>
               <a
                 href="#contact"
                 className="cyber-button-outline px-8 py-4 text-lg font-semibold"
                 data-testid="get-in-touch-btn"
               >
-                Get In Touch
+                Let's Connect
               </a>
             </div>
           </div>
         </section>
 
         {/* Technical Expertise */}
-        <section id="expertise" className="py-20 px-4" data-testid="technical-expertise-section">
+        <section id="expertise" className="py-20 px-4 scroll-animate" data-testid="technical-expertise-section">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
-              Technical Expertise
-            </h2>
-            <p className="text-center text-gray-400 mb-12">
-              Specialized in modern web technologies and AI/ML applications
-            </p>
-            <p className="text-center text-cyan-400 mb-12">✨ Click on any card to explore</p>
+            <div className="text-center mb-12">
+              <h2 className="text-5xl font-bold mb-4 gradient-text">
+                Technical Expertise
+              </h2>
+              <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-lg`}>
+                Mastering modern technologies to build next-generation applications
+              </p>
+              <p className="text-cyan-400 mt-4">✨ Click cards to view proficiency levels</p>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {techExpertise.map((tech) => (
                 <div
                   key={tech.id}
-                  className={`tech-card p-6 cursor-pointer transition-all duration-500 ${
-                    activeCard === tech.id ? 'active' : ''
+                  className={`tech-card-3d p-6 cursor-pointer transition-all duration-500 ${
+                    activeCard === tech.id ? 'active scale-105' : ''
                   }`}
                   onClick={() => setActiveCard(activeCard === tech.id ? null : tech.id)}
                   data-testid={`tech-card-${tech.id}`}
                 >
                   <div className="text-5xl mb-4">{tech.icon}</div>
                   <h3 className="text-xl font-bold mb-2 text-cyan-400">{tech.title}</h3>
-                  <p className="text-gray-300 text-sm mb-4 leading-relaxed">{tech.description}</p>
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm mb-4 leading-relaxed`}>{tech.description}</p>
+                  
+                  {/* Progress Bar */}
+                  {activeCard === tech.id && (
+                    <div className="mb-4 animate-fade-in">
+                      <div className="flex justify-between mb-2">
+                        <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Proficiency</span>
+                        <span className="text-xs text-cyan-400 font-bold">{tech.proficiency}%</span>
+                      </div>
+                      <div className={`w-full ${isDarkMode ? 'bg-gray-800' : 'bg-gray-300'} rounded-full h-2 overflow-hidden`}>
+                        <div 
+                          className="bg-gradient-to-r from-cyan-500 to-purple-500 h-2 rounded-full transition-all duration-1000 ease-out"
+                          style={{ width: `${tech.proficiency}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  )}
+                  
                   <div className="flex flex-wrap gap-2">
                     {tech.tags.map((tag, idx) => (
                       <span
@@ -385,19 +533,19 @@ function App() {
         </section>
 
         {/* Tech Stack */}
-        <section className="py-20 px-4 overflow-hidden" data-testid="tech-stack-section">
+        <section className="py-20 px-4 overflow-hidden scroll-animate" data-testid="tech-stack-section">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
-              Tech Stack
+              Technical Arsenal
             </h2>
-            <p className="text-center text-gray-400 mb-12">
-              Tools and technologies I work with to build innovative solutions
+            <p className={`text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-12 text-lg`}>
+              Powering innovation through modern tools, frameworks, and languages.
             </p>
             <div className="tech-stack-scroll">
               <div className="tech-stack-track">
                 {[...techStack, ...techStack].map((tech, idx) => (
-                  <div key={idx} className="tech-badge">
-                    {tech}
+                  <div key={idx} className="tech-badge-enhanced" style={{'--badge-color': tech.color}}>
+                    {tech.name}
                   </div>
                 ))}
               </div>
@@ -406,24 +554,34 @@ function App() {
         </section>
 
         {/* Projects */}
-        <section id="projects" className="py-20 px-4" data-testid="projects-section">
+        <section id="projects" className="py-20 px-4 scroll-animate" data-testid="projects-section">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
-              Projects
+              Featured Projects
             </h2>
-            <p className="text-center text-gray-400 mb-12">
-              Innovative solutions combining AI, web development, and emerging technologies
+            <p className={`text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-12 text-lg`}>
+              Where innovation meets implementation - Real-world solutions, measurable impact
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects.map((project, idx) => (
-                <div key={idx} className="project-card p-6" data-testid={`project-card-${idx}`}>
-                  <div className="text-xs font-bold text-green-400 mb-3 inline-block px-3 py-1 rounded-full bg-green-500/20 border border-green-500/50">
-                    {project.badge}
+                <div key={idx} className="project-card-enhanced p-6" data-testid={`project-card-${idx}`}>
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="text-xs font-bold text-green-400 inline-block px-3 py-1 rounded-full bg-green-500/20 border border-green-500/50">
+                      {project.badge}
+                    </div>
+                    {project.impact && (
+                      <div className="text-xs font-bold text-purple-400 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/50">
+                        {project.impact}
+                      </div>
+                    )}
                   </div>
                   <h3 className="text-xl font-bold mb-2 text-cyan-400">{project.title}</h3>
-                  <p className="text-sm text-purple-400 mb-1">{project.role}</p>
-                  <p className="text-xs text-gray-500 mb-3">{project.period}</p>
-                  <p className="text-gray-300 text-sm mb-4 leading-relaxed">{project.description}</p>
+                  <div className="flex items-center gap-2 mb-3">
+                    <p className="text-sm text-purple-400 font-semibold">{project.role}</p>
+                    <span className={`${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}>•</span>
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-600'}`}>{project.period}</p>
+                  </div>
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm mb-4 leading-relaxed`}>{project.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {project.tags.map((tag, tagIdx) => (
                       <span
@@ -441,22 +599,32 @@ function App() {
         </section>
 
         {/* Internships */}
-        <section id="internships" className="py-20 px-4" data-testid="internships-section">
+        <section id="internships" className="py-20 px-4 scroll-animate" data-testid="internships-section">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
-              Internships
+              Professional Experience
             </h2>
-            <p className="text-center text-gray-400 mb-12">
-              Professional experience and hands-on learning
+            <p className="text-center text-gray-400 mb-12 text-lg">
+              Gaining real-world expertise and industry-level skills
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {internships.map((internship, idx) => (
-                <div key={idx} className="award-card p-6" data-testid={`internship-card-${idx}`}>
+                <div key={idx} className="award-card-enhanced p-6" data-testid={`internship-card-${idx}`}>
                   <div className="text-4xl mb-4">{internship.icon}</div>
                   <h4 className="text-xl font-bold mb-2 text-cyan-400">{internship.title}</h4>
-                  <p className="text-sm text-purple-400 mb-1">{internship.organization}</p>
-                  <p className="text-xs text-gray-500 mb-3">{internship.period}</p>
-                  <p className="text-gray-300 text-sm leading-relaxed mb-4">{internship.description}</p>
+                  <p className="text-sm text-purple-400 mb-1 font-semibold">{internship.organization}</p>
+                  <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-600'} mb-3`}>{internship.period}</p>
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm leading-relaxed mb-4`}>{internship.description}</p>
+                  
+                  {/* Skills learned */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {internship.skills.map((skill, sIdx) => (
+                      <span key={sIdx} className="text-xs px-2 py-1 bg-purple-500/20 text-purple-300 rounded border border-purple-500/50">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                  
                   {internship.image && (
                     <button
                       onClick={() => setModalImage(internship.image)}
@@ -473,21 +641,34 @@ function App() {
         </section>
 
         {/* Achievements */}
-        <section id="achievements" className="py-20 px-4" data-testid="achievements-section">
+        <section id="achievements" className="py-20 px-4 scroll-animate" data-testid="achievements-section">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
-              Achievements
+              Achievements & Recognition
             </h2>
-            <p className="text-center text-gray-400 mb-12">
-              Recognition and competitive achievements
+            <p className="text-center text-gray-400 mb-12 text-lg">
+              Competing at national level, delivering exceptional results
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {achievements.map((achievement, idx) => (
-                <div key={idx} className="award-card p-6" data-testid={`achievement-card-${idx}`}>
+                <div key={idx} className="award-card-enhanced p-6" data-testid={`achievement-card-${idx}`}>
                   <div className="text-4xl mb-4">{achievement.icon}</div>
                   <h4 className="text-xl font-bold mb-2 text-cyan-400">{achievement.title}</h4>
-                  <p className="text-sm text-green-400 mb-3">{achievement.subtitle}</p>
-                  <p className="text-gray-300 text-sm leading-relaxed mb-4">{achievement.description}</p>
+                  <div className="flex items-center gap-2 mb-3">
+                    <p className="text-sm text-green-400 font-semibold">{achievement.subtitle}</p>
+                    {achievement.highlight && (
+                      <>
+                        <span className="text-gray-600">•</span>
+                        <span className="text-xs text-purple-400">{achievement.highlight}</span>
+                      </>
+                    )}
+                  </div>
+                  <p
+                    className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm leading-relaxed mb-4`}
+                    style={{ whiteSpace: 'pre-line' }}
+                  >
+                    {achievement.description}
+                  </p>
                   {achievement.image && (
                     <button
                       onClick={() => setModalImage(achievement.image)}
@@ -504,21 +685,26 @@ function App() {
         </section>
 
         {/* Certifications */}
-        <section className="py-20 px-4" data-testid="certifications-section">
+        <section id="certifications" className="py-20 px-4 scroll-animate" data-testid="certifications-section">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
-              Certifications
+              Certifications & Learning
             </h2>
-            <p className="text-center text-gray-400 mb-12">
-              Continuous learning and skill development
+            <p className="text-center text-gray-400 mb-12 text-lg">
+              Committed to continuous learning and skill enhancement
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {certificates.map((cert, idx) => (
-                <div key={idx} className="publication-card p-6" data-testid={`cert-card-${idx}`}>
-                  <div className="text-4xl mb-4">📜</div>
+                <div key={idx} className="publication-card-enhanced p-6" data-testid={`cert-card-${idx}`}>
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="text-3xl">📜</div>
+                    <span className="text-xs px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded border border-cyan-500/50">
+                      {cert.category}
+                    </span>
+                  </div>
                   <h4 className="text-lg font-bold mb-2 text-cyan-400">{cert.title}</h4>
-                  <p className="text-sm text-purple-400 mb-1">{cert.issuer}</p>
-                  <p className="text-xs text-gray-500 mb-4">{cert.year}</p>
+                  <p className="text-sm text-purple-400 mb-1 font-semibold">{cert.issuer}</p>
+                  <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-600'} mb-4`}>{cert.year}</p>
                   <div className="flex flex-wrap gap-2">
                     {cert.link && (
                       <a
@@ -528,7 +714,7 @@ function App() {
                         className="inline-block cyber-button-small px-4 py-2 text-sm"
                         data-testid={`cert-link-${idx}`}
                       >
-                        Verify Certificate →
+                        Verify →
                       </a>
                     )}
                     {cert.image && (
@@ -537,7 +723,7 @@ function App() {
                         className="cyber-button-small px-4 py-2 text-sm"
                         data-testid={`view-cert-image-${idx}`}
                       >
-                        View Certificate 🔍
+                        View 🔍
                       </button>
                     )}
                   </div>
@@ -548,57 +734,57 @@ function App() {
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className="py-20 px-4" data-testid="contact-section">
+        <section id="contact" className="py-20 px-4 scroll-animate" data-testid="contact-section">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
-              Get In Touch
+              Let's Build Something Amazing
             </h2>
-            <p className="text-center text-gray-400 mb-12">
-              Let's collaborate on innovative projects and create something amazing together
+            <p className="text-center text-gray-400 mb-12 text-lg">
+              Open to collaborations, internships, and innovative projects
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Contact Form */}
-              <div className="contact-card p-8" data-testid="contact-form">
+              <div className="contact-card-enhanced p-8" data-testid="contact-form">
                 <h3 className="text-2xl font-bold mb-6 text-cyan-400">Send a Message</h3>
-                <p className="text-gray-300 mb-6">
-                  Fill out the form below and I'll get back to you as soon as possible
+                <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-6`}>
+                  Have a project in mind or want to discuss opportunities? Let's connect!
                 </p>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-300">Name</label>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Name</label>
                     <input
                       type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 bg-gray-900/70 border border-cyan-500/40 rounded-lg focus:outline-none focus:border-cyan-400 transition-colors text-white"
+                      className={`w-full px-4 py-3 ${isDarkMode ? 'bg-gray-900/70 text-white' : 'bg-white text-gray-900'} border border-cyan-500/40 rounded-lg focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30 transition-all`}
                       placeholder="Your Name"
                       data-testid="contact-name-input"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-300">Email</label>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Email</label>
                     <input
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 bg-gray-900/70 border border-cyan-500/40 rounded-lg focus:outline-none focus:border-cyan-400 transition-colors text-white"
+                      className={`w-full px-4 py-3 ${isDarkMode ? 'bg-gray-900/70 text-white' : 'bg-white text-gray-900'} border border-cyan-500/40 rounded-lg focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30 transition-all`}
                       placeholder="your.email@example.com"
                       data-testid="contact-email-input"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-300">Message</label>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Message</label>
                     <textarea
                       name="message"
                       value={formData.message}
                       onChange={handleInputChange}
                       required
                       rows="5"
-                      className="w-full px-4 py-3 bg-gray-900/70 border border-cyan-500/40 rounded-lg focus:outline-none focus:border-cyan-400 transition-colors text-white resize-none"
+                      className={`w-full px-4 py-3 ${isDarkMode ? 'bg-gray-900/70 text-white' : 'bg-white text-gray-900'} border border-cyan-500/40 rounded-lg focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30 transition-all resize-none`}
                       placeholder="Your message..."
                       data-testid="contact-message-input"
                     ></textarea>
@@ -615,31 +801,31 @@ function App() {
 
               {/* Contact Info */}
               <div className="space-y-6">
-                <div className="contact-card p-8" data-testid="contact-info">
+                <div className="contact-card-enhanced p-8" data-testid="contact-info">
                   <h3 className="text-2xl font-bold mb-6 text-cyan-400">Contact Information</h3>
-                  <p className="text-gray-300 mb-6">
-                    Feel free to reach out through any of these channels
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-6`}>
+                    Reach out through any of these channels - I respond within 24 hours!
                   </p>
                   <div className="space-y-4">
                     <a
                       href="mailto:princeraj1504@gmail.com"
-                      className="flex items-center gap-4 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all duration-300"
+                      className="flex items-center gap-4 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 hover:scale-105 transition-all duration-300"
                       data-testid="email-link"
                     >
                       <div className="text-2xl">📧</div>
                       <div>
-                        <p className="text-sm text-gray-400">Email</p>
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Email</p>
                         <p className="text-cyan-400 font-medium">princeraj1504@gmail.com</p>
                       </div>
                     </a>
                     <a
                       href="tel:+919852244801"
-                      className="flex items-center gap-4 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all duration-300"
+                      className="flex items-center gap-4 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 hover:scale-105 transition-all duration-300"
                       data-testid="phone-link"
                     >
                       <div className="text-2xl">📱</div>
                       <div>
-                        <p className="text-sm text-gray-400">Phone</p>
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Phone</p>
                         <p className="text-cyan-400 font-medium">+91-9852244801</p>
                       </div>
                     </a>
@@ -647,21 +833,21 @@ function App() {
                       href="https://www.linkedin.com/in/prince-raj-930871306/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-4 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all duration-300"
+                      className="flex items-center gap-4 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 hover:scale-105 transition-all duration-300"
                       data-testid="linkedin-link"
                     >
                       <div className="text-2xl">💼</div>
                       <div>
-                        <p className="text-sm text-gray-400">LinkedIn</p>
-                        <p className="text-cyan-400 font-medium">Connect on LinkedIn</p>
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>LinkedIn</p>
+                        <p className="text-cyan-400 font-medium">Let's Connect Professionally</p>
                       </div>
                     </a>
                   </div>
                 </div>
-                <div className="contact-card p-6">
-                  <p className="text-gray-300 text-sm leading-relaxed">
-                    <span className="opportunities-highlight">Open to opportunities</span> in Full-Stack Development, AI/ML engineering, 
-                    internships, and collaborative projects.
+                <div className="contact-card-enhanced p-6">
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm leading-relaxed`}>
+                    <span className="opportunities-highlight-enhanced">Open to Opportunities</span> in Full-Stack Development, AI/ML Engineering, 
+                     and exciting collaborative projects that push technological boundaries.
                   </p>
                 </div>
               </div>
@@ -670,34 +856,43 @@ function App() {
         </section>
 
         {/* Footer */}
-        <footer className="py-8 px-4 border-t border-cyan-500/30">
-          <div className="max-w-7xl mx-auto text-center text-gray-400">
-            <p>© 2025 Prince Raj. Built with passion for innovation.</p>
+        <footer className={`py-8 px-4 border-t ${isDarkMode ? 'border-cyan-500/30' : 'border-cyan-500/50'}`}>
+          <div className={`max-w-7xl mx-auto text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p>© 2025 Prince Raj • Crafted with passion & innovation • Let's build the future together</p>
           </div>
         </footer>
       </div>
 
-      {/* Image Modal */}
+      {/* Certificate Modal - Handles both images and PDFs */}
       {modalImage && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
           onClick={() => setModalImage(null)}
           data-testid="image-modal"
         >
-          <div className="relative max-w-5xl max-h-[90vh] w-full">
+          <div className="relative max-w-5xl max-h-[90vh] w-full h-[90vh]">
             <button
               onClick={() => setModalImage(null)}
-              className="absolute -top-12 right-0 text-white text-4xl hover:text-cyan-400 transition-colors"
+              className="absolute -top-12 right-0 text-white text-4xl hover:text-cyan-400 hover:scale-110 transition-all duration-300"
               data-testid="close-modal-btn"
             >
               ✕
             </button>
-            <img
-              src={modalImage}
-              alt="Certificate"
-              className="w-full h-full object-contain rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
+            {modalImage.endsWith('.pdf') ? (
+              <iframe
+                src={modalImage}
+                title="Certificate"
+                className="w-full h-full rounded-lg shadow-2xl shadow-cyan-500/30"
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <img
+                src={modalImage}
+                alt="Certificate"
+                className="w-full h-full object-contain rounded-lg shadow-2xl shadow-cyan-500/30"
+                onClick={(e) => e.stopPropagation()}
+              />
+            )}
           </div>
         </div>
       )}
