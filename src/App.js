@@ -199,7 +199,7 @@ function App() {
       id: 3,
       title: 'Database Architecture',
       description: 'Designing scalable database solutions and optimizing queries for high-performance applications',
-      tags: ['MySQL', 'MongoDB', 'Database Design', 'Query Optimization'],
+      tags: ['MySQL', 'Database Design', 'Query Optimization'],
       icon: '💾',
       proficiency: 75
     },
@@ -239,11 +239,11 @@ function App() {
     {
       badge: 'Deep Learning',
       title: 'AI-Powered Cancer Detection System',
-      role: 'Lead Developer',
+      role: 'Database Manager',
       period: 'Oct 2024 – Dec 2024',
-      description: 'Developed a production-ready medical imaging platform leveraging ResNet deep learning architecture for early cancer detection with 94% accuracy, potentially impacting thousands of lives.',
-      tags: ['ResNet', 'Python', 'Flask', 'Deep Learning', 'Medical AI'],
-      impact: '94% Accuracy'
+      description: 'Created a full-stack web application with real-time visualization for cancer detection using advanced deep learning models, achieving 99% accuracy.',
+      tags: ['YOLOv8', 'EfficientB3Net', 'React.js', 'Python', 'Real-time Processing'],
+      impact: '99% Accuracy'
     },
     {
       badge: 'Full-Stack',
@@ -252,7 +252,7 @@ function App() {
       period: 'Jan 2025 – Mar 2025',
       description: 'Engineered a comprehensive healthcare management system handling patient records, appointment scheduling, and billing operations with intuitive UX for 500+ concurrent users.',
       tags: ['Java', 'SQL', 'HTML5', 'CSS3', 'JavaScript', 'System Design'],
-      impact: '500+ Users'
+      impact: 'Data-Driven'
     },
     {
       badge: 'SIH 2025',
@@ -282,7 +282,7 @@ function App() {
       description: 'Completed intensive virtual internship mastering enterprise full-stack development with Java ecosystem, Spring Boot framework, React frontend, and MySQL database integration with hands-on REST API development.',
       icon: '💻',
       image: eduskillCert,
-      skills: ['Java', 'Spring Boot', 'React', 'MySQL', 'REST APIs']
+      skills: ['Java', 'Spring Boot', 'React',,'HTML','CSS', 'MySQL', 'REST APIs']
     }
   ];
 
@@ -302,8 +302,8 @@ function App() {
       title: 'Code Astra Hackathon',
       subtitle: 'IEEE, Galgotias University',
       description:
-        'Competed in the "AI in Healthcare" category, developing an intelligent Cancer Detection Website powered by the ResNet deep learning model, demonstrating practical application of AI for medical diagnosis and early disease detection. \n' +
-        '• Managed the database design and integration, ensuring efficient data handling and seamless communication between the backend and the ML model.',
+        'Competed in the "AI in Healthcare" category, developing a full-stack web application with real-time visualization for cancer detection using advanced deep learning models (YOLOv8 and EfficientB3Net), achieving 99% accuracy. \n' +
+        '• Managed the database design and integration, ensuring efficient data handling and seamless communication between the backend and the ML models for real-time processing.',
       icon: '🎯',
       image: codeAstraCert,
       highlight: 'AI in Healthcare Theme'
@@ -331,7 +331,7 @@ function App() {
     },
     {
       title: 'Data Science and Analytics',
-      issuer: 'GUVI × Google',
+      issuer: 'GUVI',
       year: '2025',
       link: 'https://www.guvi.in/verify-certificate?id=5w41E40C3857vtV71R',
       image: null,
@@ -439,7 +439,7 @@ function App() {
                 🚀 Open to Opportunities
               </span>
             </div>
-            <h1 className="text-7xl md:text-9xl font-bold mb-4 text-white">
+            <h1 className={`text-7xl md:text-9xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               Prince Raj
             </h1>
             <div className="h-12 md:h-16">
