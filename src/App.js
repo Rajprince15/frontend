@@ -4,6 +4,7 @@ import '@/App.css';
 function App() {
   const [activeCard, setActiveCard] = useState(null);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [modalImage, setModalImage] = useState(null);
   const canvasRef = useRef(null);
 
   // Neural Network Background Animation
@@ -105,7 +106,7 @@ function App() {
     );
     
     // Open email client
-    window.location.href = `mailto:adityapoddar885@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:princeraj1504@gmail.com?subject=${subject}&body=${body}`;
     
     // Reset form
     setFormData({ name: '', email: '', message: '' });
@@ -118,81 +119,152 @@ function App() {
   const techExpertise = [
     {
       id: 1,
-      title: 'Web Interfaces',
-      description: 'React.js and Flask development for AI model deployment',
-      tags: ['React.js', 'Flask', 'Web Development', 'UI/UX'],
+      title: 'Full-Stack Development',
+      description: 'Building complete web applications with React.js frontend and Node.js backend',
+      tags: ['React.js', 'Node.js', 'HTML', 'CSS', 'JavaScript'],
       icon: '🌐'
     },
     {
       id: 2,
-      title: 'Machine Learning & Deep Learning',
-      description: 'Advanced Python frameworks for cutting-edge AI solutions',
-      tags: ['Python', 'TensorFlow', 'PyTorch', 'Time Series Analysis'],
+      title: 'AI & Machine Learning',
+      description: 'Implementing ML models for real-world applications using Python frameworks',
+      tags: ['Python', 'ResNet', 'Deep Learning', 'Data Analysis'],
       icon: '🤖'
     },
     {
       id: 3,
-      title: 'Medical Applications',
-      description: 'AI-powered healthcare solutions for diagnostics and reconstruction',
-      tags: ['Medical Imaging', 'YOLOv8', 'EfficientB3Net', 'Cancer Detection'],
-      icon: '🏥'
+      title: 'Database Management',
+      description: 'Designing and managing databases for scalable applications',
+      tags: ['MySQL', 'SQL', 'Database Design', 'Data Management'],
+      icon: '💾'
     },
     {
       id: 4,
-      title: 'Large Language Models',
-      description: 'Fine-tuning and RAG implementation for intelligent chatbots',
-      tags: ['LLM Fine-tuning', 'RAG', 'NLP', 'Conversational AI'],
-      icon: '💬'
+      title: 'Java Development',
+      description: 'Creating robust backend systems and enterprise applications',
+      tags: ['Java', 'Spring Boot', 'REST APIs', 'Backend Development'],
+      icon: '☕'
     }
   ];
 
   const techStack = [
-    'Python', 'JavaScript', 'C++', 'SQL', 'TensorFlow', 'PyTorch', 'YOLO',
-    'Scikit-learn', 'React.js', 'Flask', 'Node.js', 'Qt', 'Git', 'Docker', 'OpenCV'
+    'Python', 'Java', 'JavaScript', 'React.js', 'Node.js', 'HTML', 'CSS',
+    'Tailwind CSS', 'Flask', 'FastAPI', 'MySQL', 'Pandas', 'Git', 'GitHub',
+    'ResNet', 'Cesium', 'WebXR', 'VS Code', 'IntelliJ IDEA'
   ];
 
   const projects = [
     {
-      badge: 'Patented Invention',
-      title: 'Custom Cranial Implant using Deep Learning',
-      role: 'Project Team Lead',
-      description: 'Developed a patented deep learning solution for cranial reconstruction with an intuitive web interface for one-click medical image uploads and processing.',
-      tags: ['Deep Learning', 'Medical Imaging', 'Web Interface', 'Python', 'Flask']
+      badge: 'Deep Learning',
+      title: 'Cancer Detection Website',
+      role: 'Developer',
+      period: 'Oct 2024 – Dec 2024',
+      description: 'Built a cancer detection website using the ResNet deep learning model for medical image classification with Python and Flask backend.',
+      tags: ['ResNet', 'Python', 'Flask', 'Deep Learning', 'Medical Imaging']
     },
     {
-      badge: '99% Accuracy',
-      title: 'AI-Powered Cancer Detection System',
-      role: 'Lead Developer',
-      description: 'Created a full-stack web application with real-time visualization for cancer detection using advanced deep learning models, achieving 99% accuracy.',
-      tags: ['YOLOv8', 'EfficientB3Net', 'React.js', 'Python', 'Real-time Processing']
+      badge: 'Full-Stack',
+      title: 'Hospital Management System',
+      role: 'Developer',
+      period: 'Jan 2025 – Mar 2025',
+      description: 'Developed a comprehensive web-based hospital system to manage patient data, appointments, and billing with a user-friendly interface.',
+      tags: ['Java', 'SQL', 'HTML', 'CSS', 'JavaScript', 'Database Design']
     },
     {
-      badge: 'High Accuracy',
-      title: 'EMG Signal Classification',
-      role: 'Machine Learning Engineer',
-      description: 'Developed machine learning models to classify EMG signals for 8 distinct hand gestures with high accuracy. Specialized in time series data analysis and signal processing.',
-      tags: ['Machine Learning', 'Time Series Analysis', 'Signal Processing', 'Python', 'EMG Data']
+      badge: 'SIH 2025',
+      title: 'Explore Jharkhand',
+      role: 'Team Lead',
+      period: 'Aug 2025 – Oct 2025',
+      description: 'Created an AR/VR-enabled tourism platform with AI trip planning, blockchain bookings, and UPI payments. Led a 6-member team to Top 25 in Smart India Hackathon pre-qualifiers.',
+      tags: ['React.js', 'FastAPI', 'MySQL', 'Cesium', 'WebXR', 'AI', 'Blockchain']
+    }
+  ];
+
+  const internships = [
+    {
+      title: 'AI & ML Internship',
+      organization: 'Chandigarh College of Engineering and Technology (PU)',
+      period: 'May 2025 – Jul 2025',
+      description: 'Implemented ML models for real-world data; performed preprocessing, training, and evaluation under faculty guidance.',
+      icon: '🔬',
+      image: '\assets\certificates\internship certificate.pdf' // PLACEHOLDER: Add your AI/ML internship certificate image here
     },
     {
-      badge: 'Fast & Accurate',
-      title: 'Brain Tumor Object Detection',
-      role: 'Computer Vision Engineer',
-      description: 'Implemented a YOLO-based object detection system for fast and accurate localization of brain tumors in MRI/CT scans, enabling early diagnosis and treatment planning.',
-      tags: ['YOLO', 'Object Detection', 'Medical Imaging', 'MRI/CT Analysis', 'Computer Vision']
+      title: 'Java Full Stack Developer Internship',
+      organization: 'EduSkills (Cohort 13)',
+      period: 'Mar 2024 – May 2024',
+      description: 'Completed a certified virtual internship focused on full-stack web development using Java, Spring Boot, React, and MySQL. Gained hands-on experience with backend logic, REST APIs, and database integration.',
+      icon: '💻',
+      image: '\assets\certificates\Eduskill cohort 13 internship Java full stack.pdf' // PLACEHOLDER: Add your Java Full Stack certificate image here
+    }
+  ];
+
+  const achievements = [
+    {
+      title: 'Smart India Hackathon 2025',
+      subtitle: 'Pre-Qualifiers - Top 25',
+      description: 'Led a 6-member team at Galgotias University to develop Explore Jharkhand, an AR/VR-enabled tourism platform integrating AI trip planning, blockchain verification, and UPI payments.',
+      icon: '🏆',
+      image: 'frontend\src\assets\certificates\SIH 2025.png' // PLACEHOLDER: Add your SIH 2025 certificate/photo here
     },
     {
-      badge: 'Research Innovation',
-      title: 'SAR Image Colorization Project',
-      role: 'Research Developer',
-      description: 'Implemented deep learning-based colorization for SAR images using OpenCV and transfer learning techniques to produce realistic colorized outputs.',
-      tags: ['Deep Learning', 'OpenCV', 'Transfer Learning', 'Image Processing']
+      title: 'Code Astra Hackathon',
+      subtitle: 'IEEE, Galgotias University',
+      description: 'Participated under the theme "AI in Healthcare", where the team developed a Cancer Detection Website using the ResNet deep learning model to assist in medical image classification.',
+      icon: '🎯',
+      image: '\assets\certificates\codeAstra.jpg' // PLACEHOLDER: Add your Code Astra certificate/photo here
+    }
+  ];
+
+  const certificates = [
+    {
+      title: 'Python for Data Science',
+      issuer: 'Kaggle',
+      year: '2025',
+      link: 'https://www.kaggle.com/learn/certification/princeraj15/python',
+      image: null
     },
     {
-      badge: 'Enterprise Solution',
-      title: 'ArtLink - Content Creation Platform',
-      role: 'Full-Stack Developer',
-      description: 'Built a comprehensive content creation and publishing platform with real-time collaboration features and role-based access control.',
-      tags: ['C++', 'Qt', 'SQL', 'Real-time Collaboration', 'Access Control']
+      title: 'Pandas for Data Science',
+      issuer: 'Kaggle',
+      year: '2025',
+      link: 'https://www.kaggle.com/learn/certification/princeraj15/pandas',
+      image: null
+    },
+    {
+      title: 'Data Science and Analytics',
+      issuer: 'GUVI × Google',
+      year: '2025',
+      link: 'https://www.guvi.in/verify-certificate?id=5w41E40C3857vtV71R',
+      image: null
+    },
+    {
+      title: 'MySQL',
+      issuer: 'GUVI',
+      year: '2025',
+      link: 'https://www.guvi.in/verify-certificate?id=4f063349eF1S4D7745',
+      image: null
+    },
+    {
+      title: 'Java for Beginners',
+      issuer: 'GUVI',
+      year: '2025',
+      link: 'https://www.guvi.in/verify-certificate?id=7d215z3BAj5781L4c2',
+      image: null
+    },
+    {
+      title: '100 Days of Python Advance',
+      issuer: 'GUVI',
+      year: '2025',
+      link: 'https://www.guvi.in/verify-certificate?id=H1E6rh0921T0671cW1',
+      image: null
+    },
+    {
+      title: 'IoT Bootcamp Workshop',
+      issuer: 'Galgotias University',
+      year: '2024',
+      link: null,
+      image: '\assets\certificates\IOTcertificatesAll_final-15.pdf' // PLACEHOLDER: Add your IoT Bootcamp certificate image here
     }
   ];
 
@@ -201,30 +273,58 @@ function App() {
       {/* Neural Network Background */}
       <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full z-0" />
 
-      {/* Professional Logo in Top Left */}
-      <div className="fixed top-6 left-6 z-50" data-testid="logo">
-        <div className="professional-logo">
-          <div className="logo-inner">
-            <span className="logo-text">AP</span>
+      {/* Header with Logo and Navigation */}
+      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm bg-black/30 border-b border-cyan-500/20">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          {/* Professional Logo */}
+          <div className="professional-logo" data-testid="logo">
+            <div className="logo-inner">
+              <span className="logo-text">PR</span>
+            </div>
+            <div className="logo-ring"></div>
           </div>
-          <div className="logo-ring"></div>
+
+          {/* Navigation Menu */}
+          <nav className="hidden md:flex items-center gap-8" data-testid="nav-menu">
+            <a href="#home" className="nav-link text-white hover:text-cyan-400 transition-colors font-medium">
+              Home
+            </a>
+            <a href="#expertise" className="nav-link text-white hover:text-cyan-400 transition-colors font-medium">
+              Expertise
+            </a>
+            <a href="#projects" className="nav-link text-white hover:text-cyan-400 transition-colors font-medium">
+              Projects
+            </a>
+            <a href="#internships" className="nav-link text-white hover:text-cyan-400 transition-colors font-medium">
+              Internships
+            </a>
+            <a href="#achievements" className="nav-link text-white hover:text-cyan-400 transition-colors font-medium">
+              Achievements
+            </a>
+            <a href="#certifications" className="nav-link text-white hover:text-cyan-400 transition-colors font-medium">
+              Certifications
+            </a>
+            <a href="#contact" className="cyber-button-small px-6 py-2">
+              Contact
+            </a>
+          </nav>
         </div>
-      </div>
+      </header>
 
       {/* Content */}
       <div className="relative z-10">
         {/* Hero Section */}
-        <section className="min-h-screen flex items-center justify-center px-4">
+        <section id="home" className="min-h-screen flex items-center justify-center px-4">
           <div className="text-center space-y-6 animate-fade-in">
             <h1 className="text-7xl md:text-9xl font-bold mb-4 text-white">
-              Aditya Poddar
+              Prince Raj
             </h1>
             <p className="text-3xl md:text-4xl text-cyan-400 font-light tracking-wider neon-glow">
-              AI/ML Engineer & Innovator
+              Full-Stack Developer & CS Student
             </p>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto mt-6 leading-relaxed">
-              Computer Science student passionate about transforming ideas into reality through
-              cutting-edge technology and innovative solutions in AI and medical applications.
+              Computer Science student at Galgotias University passionate about Artificial Intelligence, 
+              Data Science, and Full-Stack Web Development. Building innovative solutions with modern technologies.
             </p>
             <div className="flex gap-4 justify-center mt-8">
               <a
@@ -246,13 +346,13 @@ function App() {
         </section>
 
         {/* Technical Expertise */}
-        <section className="py-20 px-4" data-testid="technical-expertise-section">
+        <section id="expertise" className="py-20 px-4" data-testid="technical-expertise-section">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
               Technical Expertise
             </h2>
             <p className="text-center text-gray-400 mb-12">
-              Specialized in cutting-edge technologies and innovative solutions
+              Specialized in modern web technologies and AI/ML applications
             </p>
             <p className="text-center text-cyan-400 mb-12">✨ Click on any card to explore</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -309,10 +409,10 @@ function App() {
         <section id="projects" className="py-20 px-4" data-testid="projects-section">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
-              Projects & Experience
+              Projects
             </h2>
             <p className="text-center text-gray-400 mb-12">
-              Innovative solutions at the intersection of AI, healthcare, and technology
+              Innovative solutions combining AI, web development, and emerging technologies
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects.map((project, idx) => (
@@ -321,7 +421,8 @@ function App() {
                     {project.badge}
                   </div>
                   <h3 className="text-xl font-bold mb-2 text-cyan-400">{project.title}</h3>
-                  <p className="text-sm text-purple-400 mb-3">{project.role}</p>
+                  <p className="text-sm text-purple-400 mb-1">{project.role}</p>
+                  <p className="text-xs text-gray-500 mb-3">{project.period}</p>
                   <p className="text-gray-300 text-sm mb-4 leading-relaxed">{project.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {project.tags.map((tag, tagIdx) => (
@@ -339,81 +440,109 @@ function App() {
           </div>
         </section>
 
-        {/* Awards & Publications */}
-        <section className="py-20 px-4" data-testid="awards-publications-section">
+        {/* Internships */}
+        <section id="internships" className="py-20 px-4" data-testid="internships-section">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
-              Awards & Publications
+              Internships
             </h2>
             <p className="text-center text-gray-400 mb-12">
-              Recognition and contributions to the field of AI and technology
+              Professional experience and hands-on learning
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-              {/* Achievements */}
-              <div className="flex flex-col h-full">
-                <h3 className="text-3xl font-bold text-cyan-400 mb-6">Achievements</h3>
-                <div className="space-y-6 flex-1">
-                  <div className="award-card p-6" data-testid="award-card-1">
-                    <div className="text-4xl mb-4">🏆</div>
-                    <h4 className="text-xl font-bold mb-2">3rd Place Winner</h4>
-                    <p className="text-sm text-purple-400 mb-2">2024 • EXECUTE-4.0 Hackathon</p>
-                    <p className="text-gray-300 text-sm leading-relaxed">
-                      Recognized for innovative AI solution in competitive hackathon environment
-                    </p>
-                  </div>
-                  <div className="award-card p-6" data-testid="award-card-2">
-                    <div className="text-4xl mb-4">🎯</div>
-                    <h4 className="text-xl font-bold mb-2">Exhibition Participant</h4>
-                    <p className="text-sm text-purple-400 mb-2">2025 • NCEEITET 2025 at GCET Jammu</p>
-                    <p className="text-gray-300 text-sm leading-relaxed">
-                      Selected to showcase cutting-edge research and innovation at national exhibition
-                    </p>
-                  </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {internships.map((internship, idx) => (
+                <div key={idx} className="award-card p-6" data-testid={`internship-card-${idx}`}>
+                  <div className="text-4xl mb-4">{internship.icon}</div>
+                  <h4 className="text-xl font-bold mb-2 text-cyan-400">{internship.title}</h4>
+                  <p className="text-sm text-purple-400 mb-1">{internship.organization}</p>
+                  <p className="text-xs text-gray-500 mb-3">{internship.period}</p>
+                  <p className="text-gray-300 text-sm leading-relaxed mb-4">{internship.description}</p>
+                  {internship.image && (
+                    <button
+                      onClick={() => setModalImage(internship.image)}
+                      className="cyber-button-small px-4 py-2 text-sm"
+                      data-testid={`view-internship-cert-${idx}`}
+                    >
+                      View Certificate 🔍
+                    </button>
+                  )}
                 </div>
-              </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-              {/* Publications */}
-              <div className="flex flex-col h-full">
-                <h3 className="text-3xl font-bold text-cyan-400 mb-6">Publications</h3>
-                <div className="space-y-6 flex-1">
-                  <div className="publication-card p-6" data-testid="publication-card-1">
-                    <div className="text-4xl mb-4">📄</div>
-                    <h4 className="text-xl font-bold mb-2">AI Framework for Cranial Reconstruction</h4>
-                    <p className="text-sm text-green-400 mb-2">Published</p>
-                    <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                      Co-authored research on deep learning applications in medical cranial implant
-                      design and reconstruction
-                    </p>
-                    <a
-                      href="https://doi.org/10.1016/j.compbiomed.2025.110504"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block cyber-button-small px-4 py-2 text-sm"
-                      data-testid="publication-link-1"
+        {/* Achievements */}
+        <section id="achievements" className="py-20 px-4" data-testid="achievements-section">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
+              Achievements
+            </h2>
+            <p className="text-center text-gray-400 mb-12">
+              Recognition and competitive achievements
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {achievements.map((achievement, idx) => (
+                <div key={idx} className="award-card p-6" data-testid={`achievement-card-${idx}`}>
+                  <div className="text-4xl mb-4">{achievement.icon}</div>
+                  <h4 className="text-xl font-bold mb-2 text-cyan-400">{achievement.title}</h4>
+                  <p className="text-sm text-green-400 mb-3">{achievement.subtitle}</p>
+                  <p className="text-gray-300 text-sm leading-relaxed mb-4">{achievement.description}</p>
+                  {achievement.image && (
+                    <button
+                      onClick={() => setModalImage(achievement.image)}
+                      className="cyber-button-small px-4 py-2 text-sm"
+                      data-testid={`view-achievement-cert-${idx}`}
                     >
-                      View Publication →
-                    </a>
-                  </div>
-                  <div className="publication-card p-6" data-testid="publication-card-2">
-                    <div className="text-4xl mb-4">📄</div>
-                    <h4 className="text-xl font-bold mb-2">Advanced Diagnosis Systems using AI</h4>
-                    <p className="text-sm text-green-400 mb-2">Published</p>
-                    <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                      Collaborative research on artificial intelligence frameworks for medical
-                      diagnosis and treatment planning
-                    </p>
-                    <a
-                      href="https://doi.org/10.3390/bioengineering12020188"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block cyber-button-small px-4 py-2 text-sm"
-                      data-testid="publication-link-2"
-                    >
-                      View Publication →
-                    </a>
+                      View Certificate 🔍
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Certifications */}
+        <section className="py-20 px-4" data-testid="certifications-section">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
+              Certifications
+            </h2>
+            <p className="text-center text-gray-400 mb-12">
+              Continuous learning and skill development
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {certificates.map((cert, idx) => (
+                <div key={idx} className="publication-card p-6" data-testid={`cert-card-${idx}`}>
+                  <div className="text-4xl mb-4">📜</div>
+                  <h4 className="text-lg font-bold mb-2 text-cyan-400">{cert.title}</h4>
+                  <p className="text-sm text-purple-400 mb-1">{cert.issuer}</p>
+                  <p className="text-xs text-gray-500 mb-4">{cert.year}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {cert.link && (
+                      <a
+                        href={cert.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block cyber-button-small px-4 py-2 text-sm"
+                        data-testid={`cert-link-${idx}`}
+                      >
+                        Verify Certificate →
+                      </a>
+                    )}
+                    {cert.image && (
+                      <button
+                        onClick={() => setModalImage(cert.image)}
+                        className="cyber-button-small px-4 py-2 text-sm"
+                        data-testid={`view-cert-image-${idx}`}
+                      >
+                        View Certificate 🔍
+                      </button>
+                    )}
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </section>
@@ -493,29 +622,29 @@ function App() {
                   </p>
                   <div className="space-y-4">
                     <a
-                      href="mailto:adityapoddar885@gmail.com"
+                      href="mailto:princeraj1504@gmail.com"
                       className="flex items-center gap-4 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all duration-300"
                       data-testid="email-link"
                     >
                       <div className="text-2xl">📧</div>
                       <div>
                         <p className="text-sm text-gray-400">Email</p>
-                        <p className="text-cyan-400 font-medium">adityapoddar885@gmail.com</p>
+                        <p className="text-cyan-400 font-medium">princeraj1504@gmail.com</p>
                       </div>
                     </a>
                     <a
-                      href="tel:+919541385990"
+                      href="tel:+919852244801"
                       className="flex items-center gap-4 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all duration-300"
                       data-testid="phone-link"
                     >
                       <div className="text-2xl">📱</div>
                       <div>
                         <p className="text-sm text-gray-400">Phone</p>
-                        <p className="text-cyan-400 font-medium">+91-9541385990</p>
+                        <p className="text-cyan-400 font-medium">+91-9852244801</p>
                       </div>
                     </a>
                     <a
-                      href="https://www.linkedin.com/in/aditya-poddar-03295a296/"
+                      href="https://www.linkedin.com/in/prince-raj-930871306/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-4 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all duration-300"
@@ -531,8 +660,8 @@ function App() {
                 </div>
                 <div className="contact-card p-6">
                   <p className="text-gray-300 text-sm leading-relaxed">
-                    <span className="opportunities-highlight">Open to opportunities</span> in AI/ML engineering, research collaborations, and
-                    innovative technology projects.
+                    <span className="opportunities-highlight">Open to opportunities</span> in Full-Stack Development, AI/ML engineering, 
+                    internships, and collaborative projects.
                   </p>
                 </div>
               </div>
@@ -543,10 +672,35 @@ function App() {
         {/* Footer */}
         <footer className="py-8 px-4 border-t border-cyan-500/30">
           <div className="max-w-7xl mx-auto text-center text-gray-400">
-            <p>© 2025 Aditya Poddar. Built with passion for innovation.</p>
+            <p>© 2025 Prince Raj. Built with passion for innovation.</p>
           </div>
         </footer>
       </div>
+
+      {/* Image Modal */}
+      {modalImage && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+          onClick={() => setModalImage(null)}
+          data-testid="image-modal"
+        >
+          <div className="relative max-w-5xl max-h-[90vh] w-full">
+            <button
+              onClick={() => setModalImage(null)}
+              className="absolute -top-12 right-0 text-white text-4xl hover:text-cyan-400 transition-colors"
+              data-testid="close-modal-btn"
+            >
+              ✕
+            </button>
+            <img
+              src={modalImage}
+              alt="Certificate"
+              className="w-full h-full object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
