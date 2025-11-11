@@ -13,7 +13,9 @@ function App() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [modalImage, setModalImage] = useState(null);
   const [typedText, setTypedText] = useState('');
+  const [typingComplete, setTypingComplete] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const canvasRef = useRef(null);
 
   // Load theme preference from localStorage
@@ -43,6 +45,7 @@ function App() {
         setTypedText(text.slice(0, index));
         index++;
       } else {
+        setTypingComplete(true);
         clearInterval(timer);
       }
     }, 80);
@@ -58,17 +61,19 @@ function App() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    // Optimize particle count based on screen size and device performance
+    const isMobile = window.innerWidth <= 768;
     const particles = [];
-    const particleCount = 100;
-    const connectionDistance = 180;
+    const particleCount = isMobile ? 30 : 100; // Reduced particles for mobile
+    const connectionDistance = isMobile ? 120 : 180; // Shorter connections on mobile
 
     class Particle {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.8;
-        this.vy = (Math.random() - 0.5) * 0.8;
-        this.radius = Math.random() * 2.5 + 1;
+        this.vx = (Math.random() - 0.5) * (isMobile ? 0.5 : 0.8); // Slower on mobile
+        this.vy = (Math.random() - 0.5) * (isMobile ? 0.5 : 0.8);
+        this.radius = Math.random() * (isMobile ? 1.5 : 2.5) + 1; // Smaller on mobile
       }
 
       update() {
@@ -82,17 +87,24 @@ function App() {
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
-        gradient.addColorStop(0, 'rgba(6, 182, 212, 1)');
-        gradient.addColorStop(1, 'rgba(6, 182, 212, 0.3)');
-        ctx.fillStyle = gradient;
-        ctx.fill();
         
-        // Add glow
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = '#06b6d4';
-        ctx.fill();
-        ctx.shadowBlur = 0;
+        // Simplified rendering for mobile (no gradients/shadows)
+        if (isMobile) {
+          ctx.fillStyle = 'rgba(6, 182, 212, 0.8)';
+          ctx.fill();
+        } else {
+          const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+          gradient.addColorStop(0, 'rgba(6, 182, 212, 1)');
+          gradient.addColorStop(1, 'rgba(6, 182, 212, 0.3)');
+          ctx.fillStyle = gradient;
+          ctx.fill();
+          
+          // Add glow
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = '#06b6d4';
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
       }
     }
 
@@ -100,31 +112,42 @@ function App() {
       particles.push(new Particle());
     }
 
-    function animate() {
+    let lastTime = 0;
+    const fps = isMobile ? 30 : 60; // Lower FPS on mobile
+    const interval = 1000 / fps;
+
+    function animate(currentTime) {
+      requestAnimationFrame(animate);
+      
+      const deltaTime = currentTime - lastTime;
+      if (deltaTime < interval) return;
+      lastTime = currentTime - (deltaTime % interval);
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       particles.forEach((particle, i) => {
         particle.update();
         particle.draw();
 
-        particles.slice(i + 1).forEach(otherParticle => {
-          const dx = particle.x - otherParticle.x;
-          const dy = particle.y - otherParticle.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
+        // Only draw connections if not on mobile or draw fewer connections
+        if (!isMobile || i % 2 === 0) {
+          particles.slice(i + 1).forEach(otherParticle => {
+            const dx = particle.x - otherParticle.x;
+            const dy = particle.y - otherParticle.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < connectionDistance) {
-            ctx.beginPath();
-            const opacity = 1 - distance / connectionDistance;
-            ctx.strokeStyle = `rgba(6, 182, 212, ${opacity * 0.5})`;
-            ctx.lineWidth = 1;
-            ctx.moveTo(particle.x, particle.y);
-            ctx.lineTo(otherParticle.x, otherParticle.y);
-            ctx.stroke();
-          }
-        });
+            if (distance < connectionDistance) {
+              ctx.beginPath();
+              const opacity = 1 - distance / connectionDistance;
+              ctx.strokeStyle = `rgba(6, 182, 212, ${opacity * (isMobile ? 0.3 : 0.5)})`;
+              ctx.lineWidth = isMobile ? 0.5 : 1;
+              ctx.moveTo(particle.x, particle.y);
+              ctx.lineTo(otherParticle.x, otherParticle.y);
+              ctx.stroke();
+            }
+          });
+        }
       });
-
-      requestAnimationFrame(animate);
     }
 
     animate();
@@ -184,32 +207,28 @@ function App() {
       title: 'Full-Stack Development',
       description: 'Crafting seamless web experiences from database to UI with modern frameworks and best practices',
       tags: ['React.js', 'Node.js', 'HTML5', 'CSS3', 'JavaScript'],
-      icon: '🌐',
-      proficiency: 85
+      icon: '🌐'
     },
     {
       id: 2,
       title: 'AI & Machine Learning',
       description: 'Building intelligent systems using deep learning architectures and ML algorithms for real-world impact',
       tags: ['Python', 'ResNet', 'Deep Learning', 'Data Analysis'],
-      icon: '🤖',
-      proficiency: 80
+      icon: '🤖'
     },
     {
       id: 3,
       title: 'Database Architecture',
       description: 'Designing scalable database solutions and optimizing queries for high-performance applications',
       tags: ['MySQL', 'Database Design', 'Query Optimization'],
-      icon: '💾',
-      proficiency: 75
+      icon: '💾'
     },
     {
       id: 4,
       title: 'Backend Engineering',
       description: 'Developing robust server-side systems and RESTful APIs for enterprise-grade applications',
       tags: ['Java', 'Spring Boot', 'FastAPI', 'REST APIs'],
-      icon: '☕',
-      proficiency: 78
+      icon: '☕'
     }
   ];
 
@@ -282,7 +301,7 @@ function App() {
       description: 'Completed intensive virtual internship mastering enterprise full-stack development with Java ecosystem, Spring Boot framework, React frontend, and MySQL database integration with hands-on REST API development.',
       icon: '💻',
       image: eduskillCert,
-      skills: ['Java', 'Spring Boot', 'React',,'HTML','CSS', 'MySQL', 'REST APIs']
+      skills: ['Java', 'Spring Boot', 'React', 'HTML', 'CSS', 'MySQL', 'REST APIs']
     }
   ];
 
@@ -374,11 +393,17 @@ function App() {
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-black to-gray-900' : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'} ${isDarkMode ? 'text-white' : 'text-gray-900'} relative overflow-hidden transition-colors duration-500`}>
       {/* Neural Network Background */}
-      <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full z-0" style={{ opacity: isDarkMode ? 1 : 0.3 }} />
+      <canvas 
+        ref={canvasRef} 
+        className="fixed top-0 left-0 w-full h-full z-0" 
+        style={{ 
+          opacity: isDarkMode ? (window.innerWidth <= 768 ? 0.6 : 1) : (window.innerWidth <= 768 ? 0.2 : 0.3)
+        }} 
+      />
 
       {/* Header with Logo and Navigation */}
       <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md ${isDarkMode ? 'bg-black/40 border-cyan-500/30' : 'bg-white/40 border-cyan-500/50'} border-b shadow-lg shadow-cyan-500/10 transition-colors duration-500`}>
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           {/* Professional Logo */}
           <div className="professional-logo" data-testid="logo">
             <div className="logo-inner">
@@ -387,24 +412,24 @@ function App() {
             <div className="logo-ring"></div>
           </div>
 
-          {/* Navigation Menu */}
-          <nav className="hidden md:flex items-center gap-8" data-testid="nav-menu">
-            <a href="#home" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium`}>
+          {/* Desktop Navigation Menu */}
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8" data-testid="nav-menu">
+            <a href="#home" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium text-sm xl:text-base`}>
               Home
             </a>
-            <a href="#expertise" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium`}>
+            <a href="#expertise" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium text-sm xl:text-base`}>
               Expertise
             </a>
-            <a href="#projects" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium`}>
+            <a href="#projects" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium text-sm xl:text-base`}>
               Projects
             </a>
-            <a href="#internships" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium`}>
+            <a href="#internships" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium text-sm xl:text-base`}>
               Experience
             </a>
-            <a href="#achievements" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium`}>
+            <a href="#achievements" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium text-sm xl:text-base`}>
               Achievements
             </a>
-            <a href="#certifications" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium`}>
+            <a href="#certifications" className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium text-sm xl:text-base`}>
               Certifications
             </a>
             
@@ -422,50 +447,139 @@ function App() {
               )}
             </button>
             
-            <a href="#contact" className="cyber-button-small px-6 py-2">
+            <a href="#contact" className="cyber-button-small px-4 xl:px-6 py-2 text-sm">
               Contact
             </a>
           </nav>
+
+          {/* Mobile Menu Button */}
+          <div className="flex items-center gap-3 lg:hidden">
+            <button
+              onClick={toggleTheme}
+              className="theme-toggle-btn-mobile"
+              data-testid="theme-toggle-mobile"
+              aria-label="Toggle theme"
+            >
+              {isDarkMode ? (
+                <span className="theme-icon text-lg">☀️</span>
+              ) : (
+                <span className="theme-icon text-lg">🌙</span>
+              )}
+            </button>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className={`p-2 ${isDarkMode ? 'text-cyan-400' : 'text-cyan-600'}`}
+              data-testid="mobile-menu-button"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className={`lg:hidden ${isDarkMode ? 'bg-black/95' : 'bg-white/95'} backdrop-blur-lg border-t ${isDarkMode ? 'border-cyan-500/30' : 'border-cyan-500/50'}`}>
+            <nav className="flex flex-col px-4 py-4 space-y-3" data-testid="mobile-nav">
+              <a 
+                href="#home" 
+                onClick={() => setMobileMenuOpen(false)}
+                className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium py-2`}
+              >
+                Home
+              </a>
+              <a 
+                href="#expertise" 
+                onClick={() => setMobileMenuOpen(false)}
+                className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium py-2`}
+              >
+                Expertise
+              </a>
+              <a 
+                href="#projects" 
+                onClick={() => setMobileMenuOpen(false)}
+                className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium py-2`}
+              >
+                Projects
+              </a>
+              <a 
+                href="#internships" 
+                onClick={() => setMobileMenuOpen(false)}
+                className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium py-2`}
+              >
+                Experience
+              </a>
+              <a 
+                href="#achievements" 
+                onClick={() => setMobileMenuOpen(false)}
+                className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium py-2`}
+              >
+                Achievements
+              </a>
+              <a 
+                href="#certifications" 
+                onClick={() => setMobileMenuOpen(false)}
+                className={`nav-link ${isDarkMode ? 'text-white hover:text-cyan-400' : 'text-gray-800 hover:text-cyan-600'} transition-colors font-medium py-2`}
+              >
+                Certifications
+              </a>
+              <a 
+                href="#contact" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="cyber-button-small px-6 py-3 text-center mt-2"
+              >
+                Contact
+              </a>
+            </nav>
+          </div>
+        )}
       </header>
 
       {/* Content */}
       <div className="relative z-10">
         {/* Hero Section */}
-        <section id="home" className="min-h-screen flex items-center justify-center px-4">
-          <div className="text-center space-y-6 animate-fade-in">
-            <div className="inline-block mb-4">
-              <span className="px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/50 rounded-full text-sm text-cyan-400 font-semibold">
+        <section id="home" className="min-h-screen flex items-center justify-center px-4 pt-20 sm:pt-0">
+          <div className="text-center space-y-4 sm:space-y-6 animate-fade-in max-w-6xl mx-auto">
+            <div className="inline-block mb-2 sm:mb-4">
+              <span className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/50 rounded-full text-sm sm:text-base text-cyan-400 font-semibold inline-flex items-center gap-2">
                 🚀 Open to Opportunities
               </span>
             </div>
-            <h1 className={`text-7xl md:text-9xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            <h1 className={`text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-bold mb-3 sm:mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               Prince Raj
             </h1>
-            <div className="h-12 md:h-16">
-              <p className="text-3xl md:text-4xl text-cyan-400 font-light tracking-wider neon-glow typing-effect">
-                {typedText}<span className="typing-cursor">|</span>
+            <div className="min-h-[60px] sm:min-h-[56px] md:min-h-[64px] flex items-center justify-center px-4">
+              <p className="text-lg sm:text-2xl md:text-3xl lg:text-4xl text-cyan-400 font-light tracking-wide sm:tracking-wider neon-glow typing-effect text-center leading-tight sm:leading-normal">
+                {typedText}{!typingComplete && <span className="typing-cursor">|</span>}
               </p>
             </div>
-            <p className={`text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} max-w-3xl mx-auto mt-6 leading-relaxed`}>
+            <p className={`text-base sm:text-lg md:text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} max-w-3xl mx-auto mt-4 sm:mt-6 leading-relaxed px-4`}>
               <span className="font-semibold text-cyan-400">Computer Science @ Galgotias University</span> | Transforming ideas into elegant code
-              <br />
-              Exploring <span className="text-purple-400 font-semibold">AI/ML</span>, <span className="text-green-400 font-semibold">Full-Stack Development</span>, and <span className="text-orange-400 font-semibold">Data Science</span>
+              <br className="hidden sm:block" />
+              <span className="block sm:inline mt-2 sm:mt-0">Exploring <span className="text-purple-400 font-semibold">AI/ML</span>, <span className="text-green-400 font-semibold">Full-Stack Development</span>, and <span className="text-orange-400 font-semibold">Data Science</span></span>
             </p>
-            <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-2xl mx-auto italic`}>
+            <p className={`text-sm sm:text-base md:text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-2xl mx-auto italic px-4`}>
               "Building tomorrow's solutions with today's cutting-edge technologies"
             </p>
-            <div className="flex gap-4 justify-center mt-8">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mt-6 sm:mt-8 px-4">
               <a
                 href="#projects"
-                className="cyber-button px-8 py-4 text-lg font-semibold"
+                className="cyber-button px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold"
                 data-testid="view-work-btn"
               >
                 Explore My Work
               </a>
               <a
                 href="#contact"
-                className="cyber-button-outline px-8 py-4 text-lg font-semibold"
+                className="cyber-button-outline px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold"
                 data-testid="get-in-touch-btn"
               >
                 Let's Connect
@@ -475,52 +589,32 @@ function App() {
         </section>
 
         {/* Technical Expertise */}
-        <section id="expertise" className="py-20 px-4 scroll-animate" data-testid="technical-expertise-section">
+        <section id="expertise" className="py-12 sm:py-16 md:py-20 px-4 scroll-animate" data-testid="technical-expertise-section">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-5xl font-bold mb-4 gradient-text">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 gradient-text">
                 Technical Expertise
               </h2>
-              <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-lg`}>
+              <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-base sm:text-lg px-4`}>
                 Mastering modern technologies to build next-generation applications
               </p>
-              <p className="text-cyan-400 mt-4">✨ Click cards to view proficiency levels</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {techExpertise.map((tech) => (
                 <div
                   key={tech.id}
-                  className={`tech-card-3d p-6 cursor-pointer transition-all duration-500 ${
-                    activeCard === tech.id ? 'active scale-105' : ''
-                  }`}
-                  onClick={() => setActiveCard(activeCard === tech.id ? null : tech.id)}
+                  className="tech-card-3d p-5 sm:p-6 transition-all duration-500"
                   data-testid={`tech-card-${tech.id}`}
                 >
-                  <div className="text-5xl mb-4">{tech.icon}</div>
-                  <h3 className="text-xl font-bold mb-2 text-cyan-400">{tech.title}</h3>
-                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm mb-4 leading-relaxed`}>{tech.description}</p>
-                  
-                  {/* Progress Bar */}
-                  {activeCard === tech.id && (
-                    <div className="mb-4 animate-fade-in">
-                      <div className="flex justify-between mb-2">
-                        <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Proficiency</span>
-                        <span className="text-xs text-cyan-400 font-bold">{tech.proficiency}%</span>
-                      </div>
-                      <div className={`w-full ${isDarkMode ? 'bg-gray-800' : 'bg-gray-300'} rounded-full h-2 overflow-hidden`}>
-                        <div 
-                          className="bg-gradient-to-r from-cyan-500 to-purple-500 h-2 rounded-full transition-all duration-1000 ease-out"
-                          style={{ width: `${tech.proficiency}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  )}
+                  <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">{tech.icon}</div>
+                  <h3 className="text-lg sm:text-xl font-bold mb-2 text-cyan-400">{tech.title}</h3>
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm mb-3 sm:mb-4 leading-relaxed`}>{tech.description}</p>
                   
                   <div className="flex flex-wrap gap-2">
                     {tech.tags.map((tag, idx) => (
                       <span
                         key={idx}
-                        className="text-xs px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/50"
+                        className="text-xs px-2.5 sm:px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/50"
                       >
                         {tag}
                       </span>
@@ -533,12 +627,12 @@ function App() {
         </section>
 
         {/* Tech Stack */}
-        <section className="py-20 px-4 overflow-hidden scroll-animate" data-testid="tech-stack-section">
+        <section className="py-12 sm:py-16 md:py-20 px-4 overflow-hidden scroll-animate" data-testid="tech-stack-section">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-3 sm:mb-4 gradient-text">
               Technical Arsenal
             </h2>
-            <p className={`text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-12 text-lg`}>
+            <p className={`text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-8 sm:mb-12 text-base sm:text-lg px-4`}>
               Powering innovation through modern tools, frameworks, and languages.
             </p>
             <div className="tech-stack-scroll">
@@ -554,34 +648,34 @@ function App() {
         </section>
 
         {/* Projects */}
-        <section id="projects" className="py-20 px-4 scroll-animate" data-testid="projects-section">
+        <section id="projects" className="py-12 sm:py-16 md:py-20 px-4 scroll-animate" data-testid="projects-section">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-3 sm:mb-4 gradient-text">
               Featured Projects
             </h2>
-            <p className={`text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-12 text-lg`}>
+            <p className={`text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-8 sm:mb-12 text-base sm:text-lg px-4`}>
               Where innovation meets implementation - Real-world solutions, measurable impact
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {projects.map((project, idx) => (
-                <div key={idx} className="project-card-enhanced p-6" data-testid={`project-card-${idx}`}>
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="text-xs font-bold text-green-400 inline-block px-3 py-1 rounded-full bg-green-500/20 border border-green-500/50">
+                <div key={idx} className="project-card-enhanced p-5 sm:p-6" data-testid={`project-card-${idx}`}>
+                  <div className="flex flex-wrap justify-between items-start gap-2 mb-3">
+                    <div className="text-xs font-bold text-green-400 inline-block px-2.5 sm:px-3 py-1 rounded-full bg-green-500/20 border border-green-500/50">
                       {project.badge}
                     </div>
                     {project.impact && (
-                      <div className="text-xs font-bold text-purple-400 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/50">
+                      <div className="text-xs font-bold text-purple-400 px-2.5 sm:px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/50">
                         {project.impact}
                       </div>
                     )}
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-cyan-400">{project.title}</h3>
-                  <div className="flex items-center gap-2 mb-3">
+                  <h3 className="text-lg sm:text-xl font-bold mb-2 text-cyan-400">{project.title}</h3>
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
                     <p className="text-sm text-purple-400 font-semibold">{project.role}</p>
                     <span className={`${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}>•</span>
                     <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-600'}`}>{project.period}</p>
                   </div>
-                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm mb-4 leading-relaxed`}>{project.description}</p>
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm mb-3 sm:mb-4 leading-relaxed`}>{project.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {project.tags.map((tag, tagIdx) => (
                       <span
@@ -599,19 +693,19 @@ function App() {
         </section>
 
         {/* Internships */}
-        <section id="internships" className="py-20 px-4 scroll-animate" data-testid="internships-section">
+        <section id="internships" className="py-12 sm:py-16 md:py-20 px-4 scroll-animate" data-testid="internships-section">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-3 sm:mb-4 gradient-text">
               Professional Experience
             </h2>
-            <p className="text-center text-gray-400 mb-12 text-lg">
+            <p className={`text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-8 sm:mb-12 text-base sm:text-lg px-4`}>
               Gaining real-world expertise and industry-level skills
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
               {internships.map((internship, idx) => (
-                <div key={idx} className="award-card-enhanced p-6" data-testid={`internship-card-${idx}`}>
-                  <div className="text-4xl mb-4">{internship.icon}</div>
-                  <h4 className="text-xl font-bold mb-2 text-cyan-400">{internship.title}</h4>
+                <div key={idx} className="award-card-enhanced p-5 sm:p-6" data-testid={`internship-card-${idx}`}>
+                  <div className="text-3xl sm:text-4xl mb-3 sm:mb-4">{internship.icon}</div>
+                  <h4 className="text-lg sm:text-xl font-bold mb-2 text-cyan-400">{internship.title}</h4>
                   <p className="text-sm text-purple-400 mb-1 font-semibold">{internship.organization}</p>
                   <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-600'} mb-3`}>{internship.period}</p>
                   <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm leading-relaxed mb-4`}>{internship.description}</p>
@@ -641,24 +735,24 @@ function App() {
         </section>
 
         {/* Achievements */}
-        <section id="achievements" className="py-20 px-4 scroll-animate" data-testid="achievements-section">
+        <section id="achievements" className="py-12 sm:py-16 md:py-20 px-4 scroll-animate" data-testid="achievements-section">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-3 sm:mb-4 gradient-text">
               Achievements & Recognition
             </h2>
-            <p className="text-center text-gray-400 mb-12 text-lg">
+            <p className={`text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-8 sm:mb-12 text-base sm:text-lg px-4`}>
               Competing at national level, delivering exceptional results
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
               {achievements.map((achievement, idx) => (
-                <div key={idx} className="award-card-enhanced p-6" data-testid={`achievement-card-${idx}`}>
-                  <div className="text-4xl mb-4">{achievement.icon}</div>
-                  <h4 className="text-xl font-bold mb-2 text-cyan-400">{achievement.title}</h4>
-                  <div className="flex items-center gap-2 mb-3">
+                <div key={idx} className="award-card-enhanced p-5 sm:p-6" data-testid={`achievement-card-${idx}`}>
+                  <div className="text-3xl sm:text-4xl mb-3 sm:mb-4">{achievement.icon}</div>
+                  <h4 className="text-lg sm:text-xl font-bold mb-2 text-cyan-400">{achievement.title}</h4>
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
                     <p className="text-sm text-green-400 font-semibold">{achievement.subtitle}</p>
                     {achievement.highlight && (
                       <>
-                        <span className="text-gray-600">•</span>
+                        <span className={`${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}>•</span>
                         <span className="text-xs text-purple-400">{achievement.highlight}</span>
                       </>
                     )}
@@ -685,24 +779,24 @@ function App() {
         </section>
 
         {/* Certifications */}
-        <section id="certifications" className="py-20 px-4 scroll-animate" data-testid="certifications-section">
+        <section id="certifications" className="py-12 sm:py-16 md:py-20 px-4 scroll-animate" data-testid="certifications-section">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-3 sm:mb-4 gradient-text">
               Certifications & Learning
             </h2>
-            <p className="text-center text-gray-400 mb-12 text-lg">
+            <p className={`text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-8 sm:mb-12 text-base sm:text-lg px-4`}>
               Committed to continuous learning and skill enhancement
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {certificates.map((cert, idx) => (
-                <div key={idx} className="publication-card-enhanced p-6" data-testid={`cert-card-${idx}`}>
+                <div key={idx} className="publication-card-enhanced p-5 sm:p-6" data-testid={`cert-card-${idx}`}>
                   <div className="flex justify-between items-start mb-3">
-                    <div className="text-3xl">📜</div>
+                    <div className="text-2xl sm:text-3xl">📜</div>
                     <span className="text-xs px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded border border-cyan-500/50">
                       {cert.category}
                     </span>
                   </div>
-                  <h4 className="text-lg font-bold mb-2 text-cyan-400">{cert.title}</h4>
+                  <h4 className="text-base sm:text-lg font-bold mb-2 text-cyan-400">{cert.title}</h4>
                   <p className="text-sm text-purple-400 mb-1 font-semibold">{cert.issuer}</p>
                   <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-600'} mb-4`}>{cert.year}</p>
                   <div className="flex flex-wrap gap-2">
@@ -734,19 +828,19 @@ function App() {
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className="py-20 px-4 scroll-animate" data-testid="contact-section">
+        <section id="contact" className="py-12 sm:py-16 md:py-20 px-4 scroll-animate" data-testid="contact-section">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-5xl font-bold text-center mb-4 gradient-text">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-3 sm:mb-4 gradient-text">
               Let's Build Something Amazing
             </h2>
-            <p className="text-center text-gray-400 mb-12 text-lg">
+            <p className={`text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-8 sm:mb-12 text-base sm:text-lg px-4`}>
               Open to collaborations, internships, and innovative projects
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
               {/* Contact Form */}
-              <div className="contact-card-enhanced p-8" data-testid="contact-form">
-                <h3 className="text-2xl font-bold mb-6 text-cyan-400">Send a Message</h3>
-                <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-6`}>
+              <div className="contact-card-enhanced p-6 sm:p-8" data-testid="contact-form">
+                <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-cyan-400">Send a Message</h3>
+                <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-4 sm:mb-6 text-sm sm:text-base`}>
                   Have a project in mind or want to discuss opportunities? Let's connect!
                 </p>
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -800,51 +894,51 @@ function App() {
               </div>
 
               {/* Contact Info */}
-              <div className="space-y-6">
-                <div className="contact-card-enhanced p-8" data-testid="contact-info">
-                  <h3 className="text-2xl font-bold mb-6 text-cyan-400">Contact Information</h3>
-                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-6`}>
+              <div className="space-y-4 sm:space-y-6">
+                <div className="contact-card-enhanced p-6 sm:p-8" data-testid="contact-info">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-cyan-400">Contact Information</h3>
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-4 sm:mb-6 text-sm sm:text-base`}>
                     Reach out through any of these channels - I respond within 24 hours!
                   </p>
                   <div className="space-y-4">
                     <a
                       href="mailto:princeraj1504@gmail.com"
-                      className="flex items-center gap-4 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 hover:scale-105 transition-all duration-300"
+                      className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 hover:scale-105 transition-all duration-300"
                       data-testid="email-link"
                     >
-                      <div className="text-2xl">📧</div>
-                      <div>
-                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Email</p>
-                        <p className="text-cyan-400 font-medium">princeraj1504@gmail.com</p>
+                      <div className="text-xl sm:text-2xl">📧</div>
+                      <div className="min-w-0">
+                        <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Email</p>
+                        <p className="text-cyan-400 font-medium text-sm sm:text-base break-all">princeraj1504@gmail.com</p>
                       </div>
                     </a>
                     <a
                       href="tel:+919852244801"
-                      className="flex items-center gap-4 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 hover:scale-105 transition-all duration-300"
+                      className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 hover:scale-105 transition-all duration-300"
                       data-testid="phone-link"
                     >
-                      <div className="text-2xl">📱</div>
+                      <div className="text-xl sm:text-2xl">📱</div>
                       <div>
-                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Phone</p>
-                        <p className="text-cyan-400 font-medium">+91-9852244801</p>
+                        <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Phone</p>
+                        <p className="text-cyan-400 font-medium text-sm sm:text-base">+91-9852244801</p>
                       </div>
                     </a>
                     <a
                       href="https://www.linkedin.com/in/prince-raj-930871306/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-4 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 hover:scale-105 transition-all duration-300"
+                      className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 hover:scale-105 transition-all duration-300"
                       data-testid="linkedin-link"
                     >
-                      <div className="text-2xl">💼</div>
+                      <div className="text-xl sm:text-2xl">💼</div>
                       <div>
-                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>LinkedIn</p>
-                        <p className="text-cyan-400 font-medium">Let's Connect Professionally</p>
+                        <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>LinkedIn</p>
+                        <p className="text-cyan-400 font-medium text-sm sm:text-base">Let's Connect Professionally</p>
                       </div>
                     </a>
                   </div>
                 </div>
-                <div className="contact-card-enhanced p-6">
+                <div className="contact-card-enhanced p-5 sm:p-6">
                   <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm leading-relaxed`}>
                     <span className="opportunities-highlight-enhanced">Open to Opportunities</span> in Full-Stack Development, AI/ML Engineering, 
                      and exciting collaborative projects that push technological boundaries.
@@ -856,9 +950,9 @@ function App() {
         </section>
 
         {/* Footer */}
-        <footer className={`py-8 px-4 border-t ${isDarkMode ? 'border-cyan-500/30' : 'border-cyan-500/50'}`}>
-          <div className={`max-w-7xl mx-auto text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            <p>© 2025 Prince Raj • Crafted with passion & innovation • Let's build the future together</p>
+        <footer className={`py-6 sm:py-8 px-4 border-t ${isDarkMode ? 'border-cyan-500/30' : 'border-cyan-500/50'}`}>
+          <div className={`max-w-7xl mx-auto text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs sm:text-sm`}>
+            <p className="px-4">© 2025 Prince Raj • Crafted with passion & innovation • Let's build the future together</p>
           </div>
         </footer>
       </div>
