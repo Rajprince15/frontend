@@ -4,6 +4,8 @@ import '@/App.css';
 // Import certificate images
 import internshipCert from '@/assets/certificates/internship certificate.pdf';
 import eduskillCert from '@/assets/certificates/Eduskill cohort 13 internship Java full stack.pdf';
+// TODO: Add Cohort 14 certificate image here
+import eduskillCohort14Cert from '@/assets/certificates/Google AI and ML Virtual Certificate.pdf';
 import sihCert from '@/assets/certificates/SIH 2025.png';
 import codeAstraCert from '@/assets/certificates/codeAstra.jpg';
 import iotCert from '@/assets/certificates/IOTcertificatesAll_final-15.pdf';
@@ -256,6 +258,15 @@ function App() {
 
   const projects = [
     {
+      badge: 'Full-Stack',
+      title: 'AlumUnity – AI-Driven Alumni Intelligence Platform',
+      role: 'Full-Stack Developer',
+      period: 'Dec 2024',
+      description: 'Built a comprehensive alumni platform using React 19, Tailwind, shadcn/ui, FastAPI, and MySQL with JWT-based authentication, RBAC, role-based dashboards, and an admin panel. Implemented core modules including alumni directory, job portal, mentorship, events, forum, real-time notifications, and ML-powered features such as skill graph, career path visualization, leaderboard, QR-based digital alumni ID, and talent heatmap.',
+      tags: ['React 19', 'Tailwind CSS', 'shadcn/ui', 'FastAPI', 'MySQL', 'JWT', 'RBAC', 'ML'],
+      impact: 'AI-Powered'
+    },
+    {
       badge: 'Deep Learning',
       title: 'AI-Powered Cancer Detection System',
       role: 'Database Manager',
@@ -295,6 +306,15 @@ function App() {
       skills: ['Python', 'ML Algorithms', 'Data Preprocessing', 'Model Evaluation']
     },
     {
+      title: 'AI / Full Stack Internship',
+      organization: 'EduSkills (Cohort 14)',
+      period: 'Oct 2024 – Dec 2024',
+      description: 'Completed a structured internship program focusing on full-stack development and real-world project implementation, gaining hands-on experience in application development and deployment with modern frameworks and technologies.',
+      icon: '💻',
+      image: eduskillCohort14Cert, // TODO: Replace with eduskillCohort14Cert once certificate is added to assets
+      skills: ['React', 'FastAPI', 'Full-Stack Development', 'Application Development', 'Deployment']
+    },
+    {
       title: 'Java Full Stack Developer Intern',
       organization: 'EduSkills (Cohort 13)',
       period: 'Mar 2024 – May 2024',
@@ -316,6 +336,17 @@ function App() {
       icon: '🏆',
       image: sihCert,
       highlight: 'Ranked 25th among 500+ participating teams'
+    },
+    {
+      title: 'International Hackathon 2025',
+      subtitle: 'Galgotias University',
+      description:
+        'Led a team at an international hackathon with 80 participants from India, Singapore, and the Maldives, designing and pitching AlumUnity, an AI-based alumni intelligence platform.\n' +
+        '• Demonstrated technical leadership in conceptualizing and presenting a comprehensive full-stack solution integrating AI/ML capabilities, role-based access control, and real-time features.\n' +
+        '• Collaborated with international participants to showcase innovative approaches to alumni engagement and career development.',
+      icon: '🌏',
+      image: null,
+      highlight: '80 participants across 3 countries'
     },
     {
       title: 'Code Astra Hackathon',
